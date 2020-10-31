@@ -13,12 +13,16 @@ It has the advantage of offering some rather practical features to improve confi
     - [Advanced](#advanced)
       - [Custom configuration class](#custom-configuration-class)
   - [Variables syntax](#variables-syntax)
+    - [Foreword](#foreword)
+    - [Typing](#typing)
+    - [Interpolation](#interpolation)
 
 ## Features
 
-- Environment variables loader in app (not for the system);
+- Environment variables importer;
 - Typing of environment variables;
-- Supports interpolation.
+- Supports interpolation;
+- Prefix management to select a specific set of variables.
 
 ## Requirements
 
@@ -120,10 +124,110 @@ print(conf.as_dict)
 
 print(conf.ftp_uri)
 ''' 
->>> ftp://hostname:22 
+>>> 'ftp://hostname:22'
 '''
 ```
 
 ## Variables syntax
 
+### Foreword
+
+Sysenv reads system environment variables. The basic syntax is therefore the same.
+
+    <ENV_KEY>=<ENV_VALUE>
+
+For example:
+
+    export APP_TEST_ENVVAR=some value
+
+Will result of:
+
+```python
+import sysenv
+
+env: sysenv.Sysenv = sysenv.Sysenv('APP_TEST_')
+
+print(env.ENVVAR)
+'''
+>>> 'some value'
+'''
+```
+
+### Typing
+
+We can specify the type of an environment variable in its value.
+
+    <ENV_KEY>=[<TYPE>:]<VALUE>
+
+**Note:** notice that the typing is optionnal. If no type are specified, the `str` object is used.
+
+For example:
+
+    export APP_TEST_TIMEOUT=int:30
+
+Will result of:
+
+```python
+import sysenv
+
+env: sysenv.Sysenv = sysenv.Sysenv('APP_TEST_')
+
+print(type(env.TIMEOUT), env.TIMEOUT)
+'''
+>>> <class 'int'> 30
+'''
+```
+
+**Note:** As you can guess, the Sysenv typing support all standards python objects as well as any external librairies which are installed into the project.  
+The only important thing is to specify the correct package path during the writing of the value.
+
+### Interpolation
+
+Sysenv also support interpolation for better configuration managing.  
+The syntax is pretty generic :
+
+    {{<ENV_KEY>}}
+
+For example:
+
+    export APP_TEST_ROOT_DIR=my_project
+    export APP_TEST_STATIC_DIR={{APP_TEST_ROOT_DIR}}/statics
+
+Will result of:
+
+```python
+import sysenv
+
+env: sysenv.Sysenv = sysenv.Sysenv('APP_TEST_')
+
+print(env.ROOT_DIR)
+'''
+>>> 'my_project'
+'''
+
+print(env.STATIC_DIR)
+'''
+>>> 'my_project/statics'
+'''
+```
+
+**Note:** We can also mixe the typing with interpolation. Just like the following example :
+
+    export APP_TEST_ROOT_DIR=pathlib.Path:my_project
+    export APP_TEST_STATIC_DIR=pathlib.Path:{{APP_TEST_ROOT_DIR}}/statics
+
+Will result of:
+
+```python
 ...
+
+print(env.ROOT_DIR)
+'''
+>>> PosixPath('my_project')
+'''
+
+print(env.STATIC_DIR)
+'''
+>>> PosixPath('my_project/statics')
+'''
+```

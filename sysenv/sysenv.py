@@ -111,7 +111,7 @@ class Sysenv:
             >>> PosixPath('statics/js')
 
             self._parse('dateutil.parser.parse:2000-01-01')
-            >>> datetime.datetime(2020, 01, 01, 0, 0)
+            >>> datetime.datetime(2000, 01, 01, 0, 0)
 
         Notes:
             The parsing string format is compatible with
