@@ -1,0 +1,9 @@
+README.md
+setup.py
+syenv/__init__.py
+syenv/exceptions.py
+syenv/syenv.py
+syenv.egg-info/PKG-INFO
+syenv.egg-info/SOURCES.txt
+syenv.egg-info/dependency_links.txt
+syenv.egg-info/top_level.txt
