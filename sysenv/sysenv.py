@@ -10,6 +10,9 @@ class Sysenv:
     """The Sysenv class definition.
     Load the environment variables which contains the prefix (if needed)
     and auto hydrate itself with the variables retrieved.
+
+    Attributes:
+        as_dict (Dict[str, Any]): The imported variables as dict format.
     """
 
     _INTERP_REGEX: str = r'{{(\w+)}}'
@@ -25,6 +28,16 @@ class Sysenv:
 
         self._prefix: str = prefix
         self._loadenv()
+
+    @property
+    def as_dict(self) -> Dict[str, Any]:
+        """Return all mutated variables in dict format.
+
+        Returns:
+            Dict[str, Any]: The formated variables.
+        """
+
+        return {k: v for k, v in self.__iter__()}
 
     def _loadenv(self) -> None:
         """Hydrate the Sysenv object with the environment variables
@@ -156,13 +169,3 @@ class Sysenv:
         for key, val in self.__dict__.items():
             if key != '_prefix':
                 yield key, val
-
-    @property
-    def as_dict(self) -> Dict[str, Any]:
-        """Return all mutated variables in dict format.
-
-        Returns:
-            Dict[str, Any]: The formated variables.
-        """
-
-        return {k: v for k, v in self.__iter__()}
