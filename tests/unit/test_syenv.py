@@ -3,8 +3,8 @@ from pydoc import locate
 from typing import Any, Dict
 import pytest
 from _pytest.monkeypatch import MonkeyPatch, monkeypatch
-from sysenv import Sysenv
-from sysenv.exceptions import SysenvError
+from syenv import Syenv
+from syenv.exceptions import SysenvError
 
 
 class TestSensy:
@@ -14,8 +14,8 @@ class TestSensy:
         expected_env: Dict[str, Any],
         monkeypatch: MonkeyPatch,
     ) -> None:
-        monkeypatch.setattr(Sysenv, '__init__', lambda self: None)
-        env: Sysenv = Sysenv()
+        monkeypatch.setattr(Syenv, '__init__', lambda self: None)
+        env: Syenv = Syenv()
         env._prefix = prefix
         env._loadenv()
 
@@ -27,8 +27,8 @@ class TestSensy:
         prefix: str,
         monkeypatch: MonkeyPatch,
     ) -> None:
-        monkeypatch.setattr(Sysenv, '__init__', lambda self: None)
-        env: Sysenv = Sysenv()
+        monkeypatch.setattr(Syenv, '__init__', lambda self: None)
+        env: Syenv = Syenv()
         env._prefix = prefix
         env.INTERP_GENERIC = Path('tests')
         result: Any = env._interpolate(
@@ -49,8 +49,8 @@ class TestSensy:
         expected_env_unparsed: Dict[str, str],
         monkeypatch: MonkeyPatch,
     ) -> None:
-        monkeypatch.setattr(Sysenv, '__init__', lambda self: None)
-        env: Sysenv = Sysenv()
+        monkeypatch.setattr(Syenv, '__init__', lambda self: None)
+        env: Syenv = Syenv()
         env._prefix = prefix
 
         for exp_val in expected_env_unparsed.values():
@@ -62,8 +62,8 @@ class TestSensy:
             env._parse('unknown_type:some value')
 
     def test__sub_prefix(self, prefix: str, monkeypatch: MonkeyPatch) -> None:
-        monkeypatch.setattr(Sysenv, '__init__', lambda self: None)
-        env: Sysenv = Sysenv()
+        monkeypatch.setattr(Syenv, '__init__', lambda self: None)
+        env: Syenv = Syenv()
         env._prefix = prefix
         key: str = f'{prefix}MY_KEY'
         expected: str = 'MY_KEY'
@@ -71,8 +71,8 @@ class TestSensy:
         assert env._sub_prefix(key) == expected
 
     def test___iter__(self, prefix: str, monkeypatch: MonkeyPatch) -> None:
-        monkeypatch.setattr(Sysenv, '__init__', lambda self: None)
-        env: Sysenv = Sysenv()
+        monkeypatch.setattr(Syenv, '__init__', lambda self: None)
+        env: Syenv = Syenv()
         env._prefix = prefix
 
         setattr(env, 'SOME_VAR', None)
@@ -86,5 +86,5 @@ class TestSensy:
         expected_env: Dict[str, Any],
         monkeypatch: MonkeyPatch,
     ) -> None:
-        env: Sysenv = Sysenv(prefix)
+        env: Syenv = Syenv(prefix)
         assert env.as_dict == expected_env

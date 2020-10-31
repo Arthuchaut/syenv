@@ -2,12 +2,12 @@ from __future__ import annotations
 import os
 import re
 from pydoc import locate
-from sysenv.exceptions import SysenvError
+from syenv.exceptions import SysenvError
 from typing import Any, Dict, Generator, List
 
 
-class Sysenv:
-    """The Sysenv class definition.
+class Syenv:
+    """The Syenv class definition.
     Load the environment variables which contains the prefix (if needed)
     and auto hydrate itself with the variables retrieved.
 
@@ -19,7 +19,7 @@ class Sysenv:
     _TYPE_SEPARATOR: str = ':'
 
     def __init__(self, prefix: str = '') -> None:
-        """The Sysenv class constructor.
+        """The Syenv class constructor.
         Hydrate the object with the variables retrieved.
 
         Args:
@@ -40,7 +40,7 @@ class Sysenv:
         return {k: v for k, v in self.__iter__()}
 
     def _loadenv(self) -> None:
-        """Hydrate the Sysenv object with the environment variables
+        """Hydrate the Syenv object with the environment variables
         retrieved.
 
         Notes:
