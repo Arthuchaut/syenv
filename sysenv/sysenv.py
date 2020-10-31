@@ -3,7 +3,7 @@ import os
 import re
 from pydoc import locate
 from sysenv.exceptions import SysenvError
-from typing import Any, Generator, List
+from typing import Any, Dict, Generator, List
 
 
 class Sysenv:
@@ -156,3 +156,13 @@ class Sysenv:
         for key, val in self.__dict__.items():
             if key != '_prefix':
                 yield key, val
+
+    @property
+    def as_dict(self) -> Dict[str, Any]:
+        """Return all mutated variables in dict format.
+
+        Returns:
+            Dict[str, Any]: The formated variables.
+        """
+
+        return {k: v for k, v in self.__iter__()}

@@ -2,7 +2,7 @@ from pathlib import Path
 from pydoc import locate
 from typing import Any, Dict
 import pytest
-from _pytest.monkeypatch import MonkeyPatch
+from _pytest.monkeypatch import MonkeyPatch, monkeypatch
 from sysenv import Sysenv
 from sysenv.exceptions import SysenvError
 
@@ -79,3 +79,12 @@ class TestSensy:
         setattr(env, 'ANOTHER_VAR', None)
 
         assert len([_ for _ in env.__iter__()]) == 2
+
+    def test_as_dict(
+        self,
+        prefix: str,
+        expected_env: Dict[str, Any],
+        monkeypatch: MonkeyPatch,
+    ) -> None:
+        env: Sysenv = Sysenv(prefix)
+        assert env.as_dict == expected_env
