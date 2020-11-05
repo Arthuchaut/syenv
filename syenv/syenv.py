@@ -16,9 +16,8 @@ class Syenv:
     """
 
     _INTERP_REGEX: str = r'{{(\w+)}}'
-    _TYPE_SEPARATOR: str = ':'
 
-    def __init__(self, prefix: str = '') -> None:
+    def __init__(self, prefix: str = '', type_separator: str = '::') -> None:
         """The Syenv class constructor.
         Hydrate the object with the variables retrieved.
 
@@ -27,6 +26,7 @@ class Syenv:
         """
 
         self._prefix: str = prefix
+        self._type_separator: str = type_separator
         self._loadenv()
 
     @property
@@ -137,7 +137,7 @@ class Syenv:
             Any: The parsed value in the correct type.
         """
 
-        env_parts: List[str] = val.split(self._TYPE_SEPARATOR)
+        env_parts: List[str] = val.split(self._type_separator)
         env_type, env_val = (
             env_parts if len(env_parts) == 2 else ['str', env_parts[0]]
         )
@@ -167,5 +167,5 @@ class Syenv:
         """Overload the __iter__ method for suppress useless attributes."""
 
         for key, val in self.__dict__.items():
-            if key != '_prefix':
+            if key not in ['_prefix', '_type_separator']:
                 yield key, val

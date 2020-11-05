@@ -17,6 +17,7 @@ class TestSensy:
         monkeypatch.setattr(Syenv, '__init__', lambda self: None)
         env: Syenv = Syenv()
         env._prefix = prefix
+        env._type_separator = '::'
         env._loadenv()
 
         for key, val in expected_env.items():
@@ -30,9 +31,10 @@ class TestSensy:
         monkeypatch.setattr(Syenv, '__init__', lambda self: None)
         env: Syenv = Syenv()
         env._prefix = prefix
+        env._type_separator = '::'
         env.INTERP_GENERIC = Path('tests')
         result: Any = env._interpolate(
-            'pathlib.Path:{{SYSENV_TEST_INTERP_GENERIC}}/.env'
+            'pathlib.Path::{{SYENV_TEST_INTERP_GENERIC}}/.env'
         )
         expected: Path = Path('tests/.env')
 
@@ -40,7 +42,7 @@ class TestSensy:
 
         with pytest.raises(SysenvError):
             env._interpolate(
-                'pathlib.Path:{{SYSENV_TEST_UNKNOWN_VARIABLE}}/.env'
+                'pathlib.Path::{{SYENV_TEST_UNKNOWN_VARIABLE}}/.env'
             )
 
     def test__parse(
@@ -52,6 +54,7 @@ class TestSensy:
         monkeypatch.setattr(Syenv, '__init__', lambda self: None)
         env: Syenv = Syenv()
         env._prefix = prefix
+        env._type_separator = '::'
 
         for exp_val in expected_env_unparsed.values():
             result: Any = env._parse(exp_val)
@@ -59,12 +62,13 @@ class TestSensy:
             assert isinstance(result, exp_type)
 
         with pytest.raises(SysenvError):
-            env._parse('unknown_type:some value')
+            env._parse('unknown_type::some value')
 
     def test__sub_prefix(self, prefix: str, monkeypatch: MonkeyPatch) -> None:
         monkeypatch.setattr(Syenv, '__init__', lambda self: None)
         env: Syenv = Syenv()
         env._prefix = prefix
+        env._type_separator = '::'
         key: str = f'{prefix}MY_KEY'
         expected: str = 'MY_KEY'
 
@@ -74,6 +78,7 @@ class TestSensy:
         monkeypatch.setattr(Syenv, '__init__', lambda self: None)
         env: Syenv = Syenv()
         env._prefix = prefix
+        env._type_separator = '::'
 
         setattr(env, 'SOME_VAR', None)
         setattr(env, 'ANOTHER_VAR', None)

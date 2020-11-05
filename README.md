@@ -39,10 +39,10 @@ We consider the following environment file:
 # .env
 MY_APP_FTPS_HOST=hostname
 MY_APP_FTPS_USER=username
-MY_APP_FTPS_PORT=int:22
+MY_APP_FTPS_PORT=int::22
 
-MY_APP_STORAGE_DIR=pathlib.Path:storage
-MY_APP_STUFF_STORAGE=pathlib.Path:{{MY_APP_STORAGE_DIR}}/stuffs
+MY_APP_STORAGE_DIR=pathlib.Path::storage
+MY_APP_STUFF_STORAGE=pathlib.Path::{{MY_APP_STORAGE_DIR}}/stuffs
 ```
 
 We can observe that the syntax of the values is a bit special. Syenv supports `variable typing` and `interpolation` (see [Variables syntax](#variables-syntax)).  
