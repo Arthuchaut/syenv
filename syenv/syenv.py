@@ -55,18 +55,31 @@ class Syenv:
 
         return {k: v for k, v in self.__iter__()}
 
-    def from_pattern(self, pattern: str) -> Dict[str, Any]:
+    def from_pattern(
+        self, pattern: str, keep_pattern: bool = False, to_lower: bool = False
+    ) -> Dict[str, Any]:
         """Get the variables which names matches with the pattern
         passed in parameter.
 
         Args:
             pattern (str): The string to search in attributes.
+            keep_pattern (bool, optional): Specify if the pattern should be
+                returned as the name of the variable name. Default to False.
+            to_lower (bool, optional): Specify if the key should be forced
+                in lower case. Default to False.
 
         Returns:
             Dict[str, Ant]: The attributes matched.
         """
+        selected: Dict[str, Any] = {}
 
-        return {k: v for k, v in self.as_dict.items() if re.search(pattern, k)}
+        for k, v in self.as_dict.items():
+            if re.search(pattern, k):
+                k = k.lower() if to_lower else k
+                k = k if keep_pattern else k.replace(pattern, '')
+                selected[k] = v
+
+        return selected
 
     def _loadenv(self) -> None:
         """Hydrate the Syenv object with the environment variables

@@ -12,6 +12,7 @@ It has the advantage of offering some rather practical features to improve confi
     - [Basics](#basics)
     - [Advanced](#advanced)
       - [Custom configuration class](#custom-configuration-class)
+      - [Using pattern selector](#using-pattern-selector)
   - [Variables syntax](#variables-syntax)
     - [Foreword](#foreword)
     - [Typing](#typing)
@@ -22,7 +23,8 @@ It has the advantage of offering some rather practical features to improve confi
 - Environment variables importer;
 - Typing of environment variables;
 - Supports interpolation;
-- Prefix management to select a specific set of variables.
+- Prefix management to select a specific set of variables ;
+- Pattern selector for retrieve some specifics variables.
 
 ## Requirements
 
@@ -37,9 +39,9 @@ We consider the following environment file:
 
 ```bash
 # .env
-MY_APP_FTPS_HOST=hostname
-MY_APP_FTPS_USER=username
-MY_APP_FTPS_PORT=int::22
+MY_APP_FTPS_PARAM_HOST=hostname
+MY_APP_FTPS_PARAM_USER=username
+MY_APP_FTPS_PARAM_PORT=int::22
 
 MY_APP_STORAGE_DIR=pathlib.Path::storage
 MY_APP_STUFF_STORAGE=pathlib.Path::{{MY_APP_STORAGE_DIR}}/stuffs
@@ -59,7 +61,7 @@ dotenv.load_dotenv()
 env: syenv.Syenv = syenv.Syenv(prefix='MY_APP_')
 
 # Now, we can access to our env vars!
-print(env.FTPS_HOST)
+print(env.FTPS_PARAM_HOST)
 '''
 >>> 'hostname' 
 '''
@@ -91,7 +93,7 @@ class Config(syenv.Syenv):
 
     @property
     def ftp_uri(self) -> str:
-        return f'ftp://{self.FTPS_HOST}:{self.FTPS_PORT}'
+        return f'ftp://{self.FTPS_PARAM_HOST}:{self.FTPS_PARAM_PORT}'
 
 ```
 
@@ -114,9 +116,9 @@ from config import conf
 
 print(conf.as_dict)
 '''
->>> {'FTPS_HOST': 'hostname',
-     'FTPS_USER': 'username',
-     'FTPS_PORT': 22,
+>>> {'FTPS_PARAM_HOST': 'hostname',
+     'FTPS_PARAM_USER': 'username',
+     'FTPS_PARAM_PORT': 22,
      'STORAGE_DIR': PosixPath('storage'),
      'STUFF_STORAGE': PosixPath('storage/stuffs'),
      'another_var': 'Hey!'}
@@ -127,6 +129,41 @@ print(conf.ftp_uri)
 >>> 'ftp://hostname:22'
 '''
 ```
+
+#### Using pattern selector
+
+Consider using this env file :
+
+```bash
+# .env
+MY_APP_FTP_PARAM_HOST=hostname
+MY_APP_FTP_PARAM_USER=username
+MY_APP_FTP_PARAM_PASSWORD=secret
+
+MY_APP_STORAGE_DIR=pathlib.Path::storage
+MY_APP_STUFF_STORAGE=pathlib.Path::{{MY_APP_STORAGE_DIR}}/stuffs
+```
+
+Lets using the python FTP lib for example :
+
+```python
+from ftplib import FTP
+import dotenv
+from syenv import Syenv
+
+dotenv.load_dotenv()
+env: Syenv = Syenv(prefix='MY_APP_')
+ftp: FTP = FTP(**env.from_pattern('FTP_PARAM_', to_lower=True))
+
+print(**env.from_pattern('FTP_PARAM_', to_lower=True))
+'''
+>>> {'host': 'hostname',
+     'user': 'username',
+     'password': 'secret'}
+'''
+```
+
+**Note:** we can also keep the pattern string to the keys if we want.
 
 ## Variables syntax
 

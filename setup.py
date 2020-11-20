@@ -5,7 +5,7 @@ long_description: str = pathlib.Path('README.md').read_text(encoding='utf-8')
 
 setuptools.setup(
     name="syenv",
-    version="1.2.0",
+    version="1.2.1",
     author="Arthuchaut",
     author_email="arthuchaut@gmail.com",
     description="A simple environment variables importer which some cool functionnalities",

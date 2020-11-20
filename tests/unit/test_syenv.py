@@ -30,7 +30,8 @@ class TestSensy:
         env: Syenv = patched_syenv()
         env.INTERP_GENERIC = Path('tests')
         result: Any = env._interpolate(
-            'pathlib.Path::{{SYENV_TEST_INTERP_GENERIC}}/.env'
+            'pathlib.Path%s{{SYENV_TEST_INTERP_GENERIC}}/.env'
+            % env._DEFAULT_TYPE_SEP
         )
         expected: Path = Path('tests/.env')
 
@@ -38,7 +39,8 @@ class TestSensy:
 
         with pytest.raises(SysenvError):
             env._interpolate(
-                'pathlib.Path::{{SYENV_TEST_UNKNOWN_VARIABLE}}/.env'
+                'pathlib.Path%s{{SYENV_TEST_UNKNOWN_VARIABLE}}/.env'
+                % env._DEFAULT_TYPE_SEP
             )
 
     def test__parse(
@@ -54,7 +56,7 @@ class TestSensy:
             assert isinstance(result, exp_type)
 
         with pytest.raises(SysenvError):
-            env._parse('unknown_type::some value')
+            env._parse(f'unknown_type{env._DEFAULT_TYPE_SEP}some value')
 
     def test__sub_prefix(
         self, patched_syenv: Callable[[bool], Syenv], prefix: str
@@ -90,4 +92,4 @@ class TestSensy:
             'SYENV_TEST_MULTI_INTERP_SPE_3': 'this is my test!',
         }
 
-        assert env.from_pattern('MULTI_INTERP') == expected
+        assert env.from_pattern('MULTI_INTERP_', keep_pattern=True) == expected
