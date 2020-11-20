@@ -16,17 +16,33 @@ class Syenv:
     """
 
     _INTERP_REGEX: str = r'{{(\w+)}}'
+    _DEFAULT_TYPE_SEP: str = '::'
+    _DEFAULT_KEEP_PREFIX: bool = False
+    _SKIPED_ATTR: List[str] = ['_prefix', '_type_separator', '_keep_prefix']
 
-    def __init__(self, prefix: str = '', type_separator: str = '::') -> None:
+    def __init__(
+        self,
+        prefix: str = '',
+        *,
+        type_separator: str = _DEFAULT_TYPE_SEP,
+        keep_prefix: bool = _DEFAULT_KEEP_PREFIX,
+    ) -> None:
         """The Syenv class constructor.
         Hydrate the object with the variables retrieved.
 
         Args:
-            prefix (str, optional): The variables prefixe. Default to ''.
+            prefix (str, optional): The variables prefixe.
+                Default to Syenv._DEFAULT_TYPE_SEP.
+            type_separator (str, optional): The pattern that seperate the
+                type from the value. Default to Syenv._DEFAULT_TYPE_SEP.
+            keep_prefix (bool, optional): Indicate if Syenv should keep this
+                prefix for its attributes name.
+                Default to Syenv._DEFAULT_KEEP_PREFIX.
         """
 
         self._prefix: str = prefix
         self._type_separator: str = type_separator
+        self._keep_prefix: bool = keep_prefix
         self._loadenv()
 
     @property
@@ -52,7 +68,9 @@ class Syenv:
             if re.match(r'^%s' % self._prefix, env_key):
                 setattr(
                     self,
-                    self._sub_prefix(env_key),
+                    env_key
+                    if self._keep_prefix
+                    else self._sub_prefix(env_key),
                     self._interpolate(os.environ[env_key]),
                 )
 
@@ -84,7 +102,14 @@ class Syenv:
                 try:
                     val = val.replace(
                         '{{%s}}' % key,
-                        str(getattr(self, self._sub_prefix(key))),
+                        str(
+                            getattr(
+                                self,
+                                key
+                                if self._keep_prefix
+                                else self._sub_prefix(key),
+                            )
+                        ),
                     )
                 except AttributeError:
                     raise SysenvError(
@@ -167,5 +192,5 @@ class Syenv:
         """Overload the __iter__ method for suppress useless attributes."""
 
         for key, val in self.__dict__.items():
-            if key not in ['_prefix', '_type_separator']:
+            if key not in self._SKIPED_ATTR:
                 yield key, val
