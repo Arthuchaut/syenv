@@ -1,5 +1,7 @@
 from pathlib import Path
 from pydoc import locate
+from _pytest.monkeypatch import MonkeyPatch
+from syenv.syenv import Syenv
 from typing import Any, Dict, List
 import pytest
 import dotenv
@@ -12,6 +14,15 @@ dotenv.load_dotenv(FAKE_ENV_FILE)
 @pytest.fixture
 def prefix() -> str:
     return 'SYENV_TEST_'
+
+
+@pytest.fixture
+def patched_syenv(monkeypatch: MonkeyPatch, prefix: str) -> Syenv:
+    monkeypatch.setattr(Syenv, '__init__', lambda self: None)
+    env: Syenv = Syenv()
+    env._prefix = prefix
+    env._type_separator = '::'
+    return env
 
 
 @pytest.fixture
