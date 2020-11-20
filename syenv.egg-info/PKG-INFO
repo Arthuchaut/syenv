@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: syenv
-Version: 1.1.0
+Version: 1.2.0
 Summary: A simple environment variables importer which some cool functionnalities
 Home-page: https://github.com/Arthuchaut/syenv
 Author: Arthuchaut
@@ -47,10 +47,10 @@ Description: # Syenv
         # .env
         MY_APP_FTPS_HOST=hostname
         MY_APP_FTPS_USER=username
-        MY_APP_FTPS_PORT=int:22
+        MY_APP_FTPS_PORT=int::22
         
-        MY_APP_STORAGE_DIR=pathlib.Path:storage
-        MY_APP_STUFF_STORAGE=pathlib.Path:{{MY_APP_STORAGE_DIR}}/stuffs
+        MY_APP_STORAGE_DIR=pathlib.Path::storage
+        MY_APP_STUFF_STORAGE=pathlib.Path::{{MY_APP_STORAGE_DIR}}/stuffs
         ```
         
         We can observe that the syntax of the values is a bit special. Syenv supports `variable typing` and `interpolation` (see [Variables syntax](#variables-syntax)).  

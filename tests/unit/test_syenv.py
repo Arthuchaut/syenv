@@ -1,5 +1,4 @@
 from pathlib import Path
-import pathlib
 from pydoc import locate
 from typing import Any, Callable, Dict
 import pytest
