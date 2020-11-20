@@ -1,4 +1,5 @@
 from pathlib import Path
+import pathlib
 from pydoc import locate
 from typing import Any, Callable, Dict
 import pytest
@@ -80,3 +81,14 @@ class TestSensy:
     ) -> None:
         env: Syenv = Syenv(prefix)
         assert env.as_dict == expected_env()
+
+    def test_from_pattern(self, prefix: str) -> None:
+        env: Syenv = Syenv(prefix, keep_prefix=True)
+        expected: Dict[str, str] = {
+            'SYENV_TEST_MULTI_INTERP_GEN': 'this',
+            'SYENV_TEST_MULTI_INTERP_SPE_1': 'this is',
+            'SYENV_TEST_MULTI_INTERP_SPE_2': 'my',
+            'SYENV_TEST_MULTI_INTERP_SPE_3': 'this is my test!',
+        }
+
+        assert env.from_pattern('MULTI_INTERP') == expected

@@ -55,6 +55,19 @@ class Syenv:
 
         return {k: v for k, v in self.__iter__()}
 
+    def from_pattern(self, pattern: str) -> Dict[str, Any]:
+        """Get the variables which names matches with the pattern
+        passed in parameter.
+
+        Args:
+            pattern (str): The string to search in attributes.
+
+        Returns:
+            Dict[str, Ant]: The attributes matched.
+        """
+
+        return {k: v for k, v in self.as_dict.items() if re.search(pattern, k)}
+
     def _loadenv(self) -> None:
         """Hydrate the Syenv object with the environment variables
         retrieved.
